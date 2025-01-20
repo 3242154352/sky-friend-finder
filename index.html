@@ -6,7 +6,7 @@
     <title>SKY Friend Finder</title>
     <style>
         body {
-            background-image: url('sky.jpg');
+            background-image: url('images/sky.jpg');
             background-size: cover;
             font-family: Arial, sans-serif;
             color: white;
@@ -74,7 +74,26 @@
         <div id="commentsList"></div>
     </div>
 
-    <script>
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBMmjrMQPE_5idnLV__FOUhR-Ev2yICoqc",
+            authDomain: "find-a-skymate.firebaseapp.com",
+            projectId: "find-a-skymate",
+            storageBucket: "find-a-skymate.firebasestorage.app",
+            messagingSenderId: "506883472432",
+            appId: "1:506883472432:web:c7891413e6c51b4a5a41f5"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Handle page navigation
         function playSky() {
             document.getElementById("page1").style.display = "none";
             document.getElementById("page2").style.display = "block";
@@ -96,23 +115,48 @@
             document.getElementById("page4").style.display = "block";
         }
 
-        function submitDetails() {
+        // Submit details to Firestore
+        async function submitDetails() {
             const friendCode = document.getElementById("friendCode").value;
             const nickname = document.getElementById("nickname").value;
 
-            // Here you can send data to a server or handle the data further
-            console.log("Friend Code:", friendCode);
-            console.log("Nickname:", nickname);
+            try {
+                // Save to Firestore
+                await addDoc(collection(db, "comments"), {
+                    nickname: nickname,
+                    friendCode: friendCode,
+                    timestamp: new Date()
+                });
 
-            document.getElementById("page4").style.display = "none";
-            document.getElementById("commentsSection").style.display = "block";
-
-            // Example comment:
-            const commentDiv = document.createElement("div");
-            commentDiv.classList.add("comment");
-            commentDiv.innerHTML = `<strong>${nickname}</strong>: Friend Code - ${friendCode}`;
-            document.getElementById("commentsList").appendChild(commentDiv);
+                console.log("Friend Code and Nickname submitted:", friendCode, nickname);
+                document.getElementById("page4").style.display = "none";
+                document.getElementById("commentsSection").style.display = "block";
+                displayComments(); // Display the updated comments
+            } catch (error) {
+                console.error("Error submitting details:", error);
+            }
         }
+
+        // Display comments from Firestore
+        async function displayComments() {
+            const commentsList = document.getElementById("commentsList");
+            commentsList.innerHTML = ''; // Clear previous comments
+
+            const q = query(collection(db, "comments"), orderBy("timestamp", "desc"));
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                const commentData = doc.data();
+                const commentDiv = document.createElement("div");
+                commentDiv.classList.add("comment");
+                commentDiv.innerHTML = `<strong>${commentData.nickname}</strong>: Friend Code - ${commentData.friendCode}`;
+                commentsList.appendChild(commentDiv);
+            });
+        }
+
+        // Fetch and display comments when the page loads
+        window.onload = function() {
+            displayComments();
+        };
     </script>
 </body>
 </html>
