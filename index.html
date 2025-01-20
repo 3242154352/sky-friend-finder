@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKY Friend Finder</title>
+    <style>
+        body {
+            background-image: url('images/sky.jpg');
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        .input {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        .comment-box {
+            margin-top: 20px;
+        }
+        .comment {
+            background-color: #ddd;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="page1">
+        <h1>Do you play SKY?</h1>
+        <button class="button" onclick="playSky()">Yes</button>
+        <button class="button" onclick="goToWebsite()">No</button>
+    </div>
+
+    <div id="page2" style="display:none;">
+        <h2>What do you want to do with your SKY partner?</h2>
+        <button class="button" onclick="selectOption('light fire')">Find a partner to light their fire</button>
+        <button class="button" onclick="selectOption('exchange hearts')">Find a partner to exchange hearts</button>
+        <button class="button" onclick="selectOption('both')">Both</button>
+    </div>
+
+    <div id="page3" style="display:none;">
+        <h2>How frequently do you play SKY?</h2>
+        <button class="button" onclick="selectFrequency('everyday')">Every day</button>
+        <button class="button" onclick="selectFrequency('on weekends and holidays')">Weekends</button>
+        <button class="button" onclick="selectFrequency('occasionally')">Occasionally</button>
+    </div>
+
+    <div id="page4" style="display:none;">
+        <h2>Leave your details!</h2>
+        <input class="input" type="text" id="friendCode" placeholder="Your friend code">
+        <input class="input" type="text" id="nickname" placeholder="Your nickname">
+        <button class="button" onclick="submitDetails()">Submit</button>
+    </div>
+
+    <div id="commentsSection" class="comment-box" style="display:none;">
+        <h2>Other Comments</h2>
+        <div id="commentsList"></div>
+    </div>
+
+    <script>
+        function playSky() {
+            document.getElementById("page1").style.display = "none";
+            document.getElementById("page2").style.display = "block";
+        }
+
+        function goToWebsite() {
+            window.location.href = 'https://thatskygame.com'; // Official website
+        }
+
+        function selectOption(option) {
+            console.log("User chose:", option);
+            document.getElementById("page2").style.display = "none";
+            document.getElementById("page3").style.display = "block";
+        }
+
+        function selectFrequency(frequency) {
+            console.log("User plays:", frequency);
+            document.getElementById("page3").style.display = "none";
+            document.getElementById("page4").style.display = "block";
+        }
+
+        function submitDetails() {
+            const friendCode = document.getElementById("friendCode").value;
+            const nickname = document.getElementById("nickname").value;
+
+            // Here you can send data to a server or handle the data further
+            console.log("Friend Code:", friendCode);
+            console.log("Nickname:", nickname);
+
+            document.getElementById("page4").style.display = "none";
+            document.getElementById("commentsSection").style.display = "block";
+
+            // Example comment:
+            const commentDiv = document.createElement("div");
+            commentDiv.classList.add("comment");
+            commentDiv.innerHTML = `<strong>${nickname}</strong>: Friend Code - ${friendCode}`;
+            document.getElementById("commentsList").appendChild(commentDiv);
+        }
+    </script>
+</body>
+</html>
